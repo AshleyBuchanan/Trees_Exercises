@@ -35,19 +35,41 @@ class BinaryTree {
     /** maxSum(): return the maximum sum you can obtain by traveling along a path in the tree.
      * The path doesn't need to start at the root, but you can't visit a node more than once. */
 
-    maxSum(node = this.root) {
-        if (node === null) return 0;
-        if (node.left === null && node.right === null) return node.val;
-        if (node.left === null) return node.val + this.maxSum(node.right);
-        if (node.right === null) return node.val + this.maxSum(node.left);
-        return this.maxSum(node.left) + this.maxSum(node.right);
+    maxSum() {
+        let result = 0;
+
+        function helper(node = this.root) {
+            if (node === null) return 0;
+
+            let leftSum = Math.max(0, helper(node.left));
+            let rightSum = Math.max(0, helper(node.right));
+
+            result = Math.max(result, node.val + leftSum + rightSum);
+            return node.val + Math.max(leftSum, rightSum)
+        }
+        helper(this.root);
+        return result;
     }
 
     /** nextLarger(lowerBound): return the smallest value in the tree
      * which is larger than lowerBound. Return null if no such value exists. */
 
-    nextLarger(lowerBound) {
+    nextLarger(lowerBound, node = this.root) {
+        if (node === null) return null;
 
+        let candidate = (node.val > lowerBound) ? node.val : null;
+
+        let leftCan = this.nextLarger(lowerBound, node.left);
+        let rightCan = this.nextLarger(lowerBound, node.right);
+
+        if (leftCan !== null && (candidate === null || leftCan < candidate)) {
+            candidate = leftCan;
+        }
+        if (rightCan !== null && (candidate === null || rightCan < candidate)) {
+            candidate = rightCan;
+        }
+
+        return candidate;
     }
 
     /** Further study!
@@ -55,7 +77,25 @@ class BinaryTree {
      * (i.e. are at the same level but have different parents. ) */
 
     areCousins(node1, node2) {
+        if (!this.root || node1 === this.root || node2 === this.root) return false;
 
+        function findDepthAndParent(node, target, depth = 0, parent = null) {
+            if (!node) return null;
+            if (node === target) return { parent, depth };
+
+            return (
+                findDepthAndParent(node.left, target, depth + 1, node) ||
+                findDepthAndParent(node.right, target, depth + 1, node)
+            );
+        }
+
+        const node1Info = findDepthAndParent(this.root, node1);
+        const node2Info = findDepthAndParent(this.root, node2);
+
+        return (
+            node1Info.depth === node2Info.depth &&
+            node1Info.parent !== node2Info.parent
+        );
     }
 
     /** Further study!
