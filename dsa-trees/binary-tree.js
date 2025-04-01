@@ -101,8 +101,15 @@ class BinaryTree {
     /** Further study!
      * serialize(tree): serialize the BinaryTree object tree into a string. */
 
-    static serialize() {
+    static serialize(treeOrNode) {
+        const node = treeOrNode instanceof BinaryTree ? treeOrNode.root : treeOrNode;
 
+        function helper(n) {
+            if (!n) return "null";
+            return `${n.val},${helper(n.left)},${helper(n.right)}`
+        }
+
+        return helper(node);
     }
 
     /** Further study!
@@ -121,7 +128,16 @@ class BinaryTree {
     }
 }
 
+// build large tree
+let node6 = new BinaryTreeNode(1);
+let node5 = new BinaryTreeNode(1);
+let node4 = new BinaryTreeNode(2);
+let node3 = new BinaryTreeNode(3, node4, node6);
+let node2 = new BinaryTreeNode(5, node3, node5);
+let node1 = new BinaryTreeNode(5);
+let root = new BinaryTreeNode(6, node1, node2);
+largeTree = new BinaryTree(root);
 
-
+console.log(BinaryTree.serialize(largeTree.root))
 
 module.exports = { BinaryTree, BinaryTreeNode };
