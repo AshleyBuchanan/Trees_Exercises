@@ -105,18 +105,35 @@ class BinaryTree {
         const node = treeOrNode instanceof BinaryTree ? treeOrNode.root : treeOrNode;
 
         function helper(n) {
-            if (!n) return "null";
-            return `${n.val},${helper(n.left)},${helper(n.right)}`
+            if (!n) return null;
+
+            return {
+                val: n.val,
+                left: helper(n.left),
+                right: helper(n.right)
+            }
         }
 
-        return helper(node);
+        return JSON.stringify({ root: helper(node) });
     }
 
     /** Further study!
      * deserialize(stringTree): deserialize stringTree into a BinaryTree object. */
 
-    static deserialize() {
+    static deserialize(stringTree) {
+        const data = typeof stringTree === "string" ? JSON.parse(stringTree) : stringTree;
 
+        function helper(obj) {
+            if (!obj) return null;
+
+            const node = new BinaryTreeNode(obj.val);
+            node.left = helper(obj.left);
+            node.right = helper(obj.right);
+
+            return node;
+        }
+
+        return new BinaryTree(helper(data.root));
     }
 
     /** Further study!
@@ -124,20 +141,37 @@ class BinaryTree {
      * of two nodes in a binary tree. */
 
     lowestCommonAncestor(node1, node2) {
+        function helper(node) {
+            if (!node) return null;
+            if (node === node1 || node === node2) return node;
 
+            const left = helper(node.left);
+            const right = helper(node.right);
+
+            if (left && right) return node;
+            return left || right;
+        }
+
+        return helper(this.root);
     }
 }
 
-// build large tree
-let node6 = new BinaryTreeNode(1);
-let node5 = new BinaryTreeNode(1);
-let node4 = new BinaryTreeNode(2);
-let node3 = new BinaryTreeNode(3, node4, node6);
-let node2 = new BinaryTreeNode(5, node3, node5);
-let node1 = new BinaryTreeNode(5);
-let root = new BinaryTreeNode(6, node1, node2);
-largeTree = new BinaryTree(root);
+// // build large tree
+// let node6 = new BinaryTreeNode(1);
+// let node5 = new BinaryTreeNode(1);
+// let node4 = new BinaryTreeNode(2);
+// let node3 = new BinaryTreeNode(3, node4, node6);
+// let node2 = new BinaryTreeNode(5, node3, node5);
+// let node1 = new BinaryTreeNode(5);
+// let root = new BinaryTreeNode(6, node1, node2);
+// largeTree = new BinaryTree(root);
 
-console.log(BinaryTree.serialize(largeTree.root))
+// const string_line = BinaryTree.serialize(largeTree.root)
+// console.log(string_line);
+// const treeline = BinaryTree.deserialize(string_line);
+// console.log(treeline);
+// const string_line2 = BinaryTree.serialize(treeline);
+// console.log(string_line2);
+
 
 module.exports = { BinaryTree, BinaryTreeNode };
