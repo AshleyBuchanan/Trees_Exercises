@@ -28,8 +28,8 @@ class BinaryTree {
      * the length of the longest path from the root to a leaf. */
 
     maxDepth(node = this.root) {
-        if (node === null) return 0;
-        return 1 + Math.max(this.maxDepth(node.left), this.maxDepth(node.right));
+        if (node === null) return 0;                                                //check if empty
+        return 1 + Math.max(this.maxDepth(node.left), this.maxDepth(node.right));   //return the max between and return
     }
 
     /** maxSum(): return the maximum sum you can obtain by traveling along a path in the tree.
@@ -39,15 +39,15 @@ class BinaryTree {
         let result = 0;
 
         function helper(node = this.root) {
-            if (node === null) return 0;
+            if (node === null) return 0;                                            //check if empty
 
-            let leftSum = Math.max(0, helper(node.left));
-            let rightSum = Math.max(0, helper(node.right));
+            let leftSum = Math.max(0, helper(node.left));                           //lock above 0 left
+            let rightSum = Math.max(0, helper(node.right));                         //lock above 0 right
 
-            result = Math.max(result, node.val + leftSum + rightSum);
-            return node.val + Math.max(leftSum, rightSum)
+            result = Math.max(result, node.val + leftSum + rightSum);               //result + result + val + left + right
+            return node.val + Math.max(leftSum, rightSum)                           //return val + max between left and right
         }
-        helper(this.root);
+        helper(this.root);                                                          //recursive helper
         return result;
     }
 
